@@ -1,0 +1,70 @@
+# Ignore compiled output
+target/
+
+# Ignore generated documentation
+doc/
+
+# Ignore IDE and editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore system-specific temporary files
+*.DS_Store
+Thumbs.db
+
+# Ignore Cargo.lock files in all workspaces
+**/Cargo.lock
+
+# Ignore build artifacts in all workspaces
+**/target/
+
+# Ignore generated files from the Rust build system
+**/.rustc_info.json
+**/.cargo/
+
+# Ignore generated files from the Rust documentation system
+**/doc/
+
+# Ignore generated files from the Rust formatting tool
+**/*.rs.bk
+
+# Ignore generated files from the Rust test framework
+**/debug/
+**/release/
+
+# Ignore generated files from the Rust code coverage tool
+**/coverage/
+
+# Ignore generated files from the Rust profiling tool
+**/*.profraw
+
+# Ignore generated files from the Rust package manager
+**/package-lock.json
+**/yarn.lock
+
+# Ignore generated files from the Rust continuous integration system
+**/.github/workflows/
+**/.travis.yml
+
+# Ignore generated files from the Rust code analysis tool
+**/.clippy.toml
+**/.rustfmt.toml
+
+# Ignore generated files from the Rust documentation generator
+**/book/
+**/examples/
+
+# Ignore generated files from the Rust benchmarking tool
+**/benches/
+**/target/criterion/
+
+# Ignore generated files from the Rust release tool
+**/release/
+**/target/release/
+**/target/debug/
+
+# Ignore generated files from the Rust documentation preview tool
+**/.mdbook/
+**/book.toml
