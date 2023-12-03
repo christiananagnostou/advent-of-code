@@ -68,3 +68,6 @@ Thumbs.db
 # Ignore generated files from the Rust documentation preview tool
 **/.mdbook/
 **/book.toml
+
+# Ignore AoC puzzle input files
+puzzle-input.txt
