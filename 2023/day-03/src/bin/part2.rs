@@ -4,25 +4,6 @@ fn is_symbol(c: char) -> bool {
     !c.is_whitespace() && c != '.' && !c.is_numeric()
 }
 
-fn process_board_characters<F>(
-    board: &[String],
-    mut char_callback: F,
-    start_y: usize,
-    start_x: usize,
-    end_y: usize,
-    end_x: usize,
-) where
-    F: FnMut(char, usize, usize),
-{
-    for y in start_y..=end_y {
-        for x in start_x..=end_x {
-            if let Some(c) = board.get(y).and_then(|r| r.chars().nth(x)) {
-                char_callback(c, y, x);
-            }
-        }
-    }
-}
-
 fn extract_gear_numbers(board: &[String]) -> (i32, i32) {
     let num_pattern = regex::Regex::new(r"\d+").unwrap();
     let mut gear_nums = HashMap::new();
@@ -33,24 +14,24 @@ fn extract_gear_numbers(board: &[String]) -> (i32, i32) {
             let num = mat.as_str().parse::<i32>().unwrap();
             let mut has_added_num = false;
 
-            let mut process_char = |c, y, x| {
-                if is_symbol(c) {
-                    gear_nums
-                        .entry((y, x, c))
-                        .or_insert_with(Vec::new)
-                        .push(num);
-                    has_added_num = has_added_num || true;
-                }
-            };
+            let start_y = row_num.saturating_sub(1);
+            let start_x = mat.start().saturating_sub(1);
+            let end_y = row_num + 1;
+            let end_x = mat.end();
 
-            process_board_characters(
-                &board,
-                &mut process_char,
-                row_num.saturating_sub(1),
-                mat.start().saturating_sub(1),
-                row_num + 1,
-                mat.end(),
-            );
+            for y in start_y..=end_y {
+                for x in start_x..=end_x {
+                    if let Some(c) = board.get(y).and_then(|r| r.chars().nth(x)) {
+                        if is_symbol(c) {
+                            gear_nums
+                                .entry((y, x, c))
+                                .or_insert_with(Vec::new)
+                                .push(num);
+                            has_added_num = has_added_num || true;
+                        }
+                    }
+                }
+            }
 
             p1_total += num * has_added_num as i32;
         }
