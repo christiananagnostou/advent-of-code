@@ -7,7 +7,7 @@ struct Mapping {
     rng: usize,
 }
 
-fn convert_source_to_dest(curr: usize, mappings: &Vec<Mapping>) -> usize {
+fn apply_mappings(curr: usize, mappings: &Vec<Mapping>) -> usize {
     for Mapping { dst, src, rng } in mappings {
         if curr >= *src && curr < *src + *rng {
             return *dst + (curr - *src);
@@ -72,7 +72,7 @@ fn main() {
 
     for seed_index in 0..seeds.len() {
         for mapping in &mappings {
-            let val = convert_source_to_dest(seeds[seed_index], mapping);
+            let val = apply_mappings(seeds[seed_index], mapping);
             seeds[seed_index] = val;
         }
     }
@@ -125,7 +125,7 @@ mod tests {
 
         for seed_index in 0..seeds.len() {
             for mapping in &mappings {
-                let val = convert_source_to_dest(seeds[seed_index], mapping);
+                let val = apply_mappings(seeds[seed_index], mapping);
                 seeds[seed_index] = val;
             }
         }

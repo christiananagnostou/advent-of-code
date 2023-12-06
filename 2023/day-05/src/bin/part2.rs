@@ -9,6 +9,54 @@ struct Mapping {
     rng: usize,
 }
 
+fn apply_mappings(
+    mut seeds: Vec<(usize, usize)>,
+    mapping_sets: &[Vec<Mapping>],
+) -> Vec<(usize, usize)> {
+    // Iterate over each set of mappings
+    for mappings in mapping_sets {
+        let mut new_ranges = Vec::new();
+
+        // Process each seed range
+        while let Some((s, e)) = seeds.pop() {
+            // Flag to track if the seed range is matched by any mapping
+            let mut matched = false;
+
+            // Check against each mapping in the current set
+            for Mapping { dst, src, rng } in mappings {
+                let os = max(s, *src);
+                let oe = min(e, src + rng);
+
+                // If there is an overlap, adjust the range and update seeds
+                if os < oe {
+                    new_ranges.push((os - src + dst, oe - src + dst));
+
+                    if os > s {
+                        seeds.push((s, os));
+                    }
+                    if e > oe {
+                        seeds.push((oe, e));
+                    }
+
+                    // Mark as matched and exit the loop
+                    matched = true;
+                    break;
+                }
+            }
+
+            // If no mapping matched, keep the original seed range
+            if !matched {
+                new_ranges.push((s, e));
+            }
+        }
+
+        // Update seeds for the next iteration
+        seeds = new_ranges.clone();
+    }
+
+    seeds
+}
+
 fn get_layer_index(layer: &str) -> Option<usize> {
     match layer {
         "seed-to-soil" => Some(0),
@@ -68,60 +116,12 @@ fn generate_range_vector(vector: &[usize]) -> Vec<(usize, usize)> {
     seed_ranges
 }
 
-fn process_mappings(
-    mut seeds: Vec<(usize, usize)>,
-    mapping_sets: &[Vec<Mapping>],
-) -> Vec<(usize, usize)> {
-    // Iterate over each set of mappings
-    for mappings in mapping_sets {
-        let mut new_ranges = Vec::new();
-
-        // Process each seed range
-        while let Some((s, e)) = seeds.pop() {
-            // Flag to track if the seed range is matched by any mapping
-            let mut matched = false;
-
-            // Check against each mapping in the current set
-            for Mapping { dst, src, rng } in mappings {
-                let os = max(s, *src);
-                let oe = min(e, src + rng);
-
-                // If there is an overlap, adjust the range and update seeds
-                if os < oe {
-                    new_ranges.push((os - src + dst, oe - src + dst));
-
-                    if os > s {
-                        seeds.push((s, os));
-                    }
-                    if e > oe {
-                        seeds.push((oe, e));
-                    }
-
-                    // Mark as matched and exit the loop
-                    matched = true;
-                    break;
-                }
-            }
-
-            // If no mapping matched, keep the original seed range
-            if !matched {
-                new_ranges.push((s, e));
-            }
-        }
-
-        // Update seeds for the next iteration
-        seeds = new_ranges.clone();
-    }
-
-    seeds
-}
-
 fn main() {
     let input = include_str!("../puzzle-input.txt");
 
     let (seeds, mapping_sets) = parse_input(input);
     let seeds = generate_range_vector(&seeds);
-    let result = process_mappings(seeds, &mapping_sets);
+    let result = apply_mappings(seeds, &mapping_sets);
 
     println!("{:?}", result.iter().min().unwrap().0);
 }
@@ -169,7 +169,7 @@ mod tests {
 
         let (seeds, mapping_sets) = parse_input(input);
         let seeds = generate_range_vector(&seeds);
-        let result = process_mappings(seeds, &mapping_sets);
+        let result = apply_mappings(seeds, &mapping_sets);
 
         assert_eq!(result.iter().min().unwrap().0, 46);
     }
