@@ -45,8 +45,6 @@ fn main() {
 
     let race = parse_input(input);
 
-    println!("{:?}", race);
-
     let win_prod = count_wins(&race);
 
     println!("{}", win_prod);

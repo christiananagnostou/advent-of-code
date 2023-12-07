@@ -38,7 +38,7 @@ fn main() {
 
     if let Ok(races) = parse_input(input) {
         let win_prod = races.iter().map(|race| count_wins(race)).product::<usize>();
-        println!("Part 1: {}", win_prod);
+        println!("{}", win_prod);
     } else {
         println!("Failed to parse input");
     }
